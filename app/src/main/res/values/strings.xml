@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">LOSTLINK</string>
+    <string name="forgot_password"><u>Forgot password?</u></string>
+    <string name="register"><u>New User? Register</u></string>
+    <string name="login"><u>Old User? Login</u></string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next &gt;</string>
+    <string name="previous">&lt; Previous</string>
+    <string name="skip">Skip &gt;</string>
+    <string name="chat">Chat</string>
+    <string name="reports">Reports</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="login_btn_text">Login</string>
+    <string name="register_btn_text">Register</string>
+    <string name="map_api_key">AIzaSyCp6j952UZ_tm-mdJYZ7wF7-oNKml1HX88</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="password">Password</string>
+    <string name="confrim_password">Confrim Password</string>
+    <string name="mail_address">Mail Address</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="add_report">Add Report</string>
+    <string name="item_name">Item Name</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="report_adding">Report Adding</string>
+    <string name="found">Found</string>
+    <string name="view">View</string>
+
+    <string-array name="report_types">
+        <item>Lost</item>
+        <item>Found</item>
+    </string-array>
+
+    <string-array name="radius_options">
+        <item>100M</item>
+        <item>200M</item>
+        <item>500M</item>
+    </string-array>
+
+</resources>

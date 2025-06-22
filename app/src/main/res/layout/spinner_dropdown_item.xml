@@ -1,0 +1,11 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dropdownText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:textSize="20sp"
+    android:textColor="@color/black"
+    android:fontFamily="@font/agency_fb_reg"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    />

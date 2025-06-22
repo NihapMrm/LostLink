@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_report_background"
+        android:paddingBottom="20dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:src="@drawable/close" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_report"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="@font/agency_fb"
+                android:textColor="@color/black"
+                />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/input_box_border">
+
+                <ImageView
+                    android:id="@+id/imagePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Image Preview" />
+
+                <ImageView
+                    android:id="@+id/placeholderIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/outline_add_a_photo_24"
+                    android:tint="@color/black" />
+            </FrameLayout>
+
+
+            <Spinner
+                android:id="@+id/reportTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/report_types"
+                android:padding="20dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/input_box_border"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/agency_fb_reg"
+                />
+
+            <EditText
+                android:id="@+id/itemNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/item_name"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/input_box_border"
+                android:padding="20dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/agency_fb_reg"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
+                android:weightSum="100">
+
+                <EditText
+                    android:id="@+id/locationEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="70"
+                    android:hint="@string/location"
+                    android:background="@drawable/input_box_border"
+                    android:padding="20dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:fontFamily="@font/agency_fb_reg"
+                    android:layout_marginEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/radiusSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="30"
+                    android:entries="@array/radius_options"
+                    android:background="@drawable/input_box_border"
+                    android:padding="20dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:fontFamily="@font/agency_fb_reg" />
+            </LinearLayout>
+
+            <fragment
+                android:id="@+id/mapFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="12dp"
+                />
+
+
+            <EditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description"
+                android:minLines="8"
+                android:maxLines="15"
+                android:gravity="top"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/input_box_border"
+                android:padding="20dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/agency_fb_reg"
+                />
+
+            <Button
+                android:id="@+id/submitReportButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/submit_report"
+                android:background="@drawable/submit_box"
+                android:padding="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/agency_fb"
+                />
+        </LinearLayout>
+    </ScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+       >
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/loading_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_adding"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:fontFamily="@font/agency_fb"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>
+
