@@ -1,17 +1,27 @@
 package com.nihap.lostlink;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +43,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView itemName, location, date, postby, reportType;
+        Button viewBtn;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -42,6 +54,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
             date = itemView.findViewById(R.id.date);
             postby = itemView.findViewById(R.id.postby);
             reportType = itemView.findViewById(R.id.report_type);
+            viewBtn = itemView.findViewById(R.id.btn_view);
+
         }
     }
 
@@ -69,10 +83,17 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         holder.postby.setText(report.getUserName());
 
 
-
+        holder.viewBtn.setOnClickListener(v -> {
+            ReportDetailBottomSheet bottomSheet = new ReportDetailBottomSheet(report);
+            bottomSheet.show(((FragmentActivity) context).getSupportFragmentManager(), "report_detail");
+        });
 
         Glide.with(context).load(report.getImageUrl()).into(holder.image); // Load image
     }
+
+
+
+
 
     @Override
     public int getItemCount() {

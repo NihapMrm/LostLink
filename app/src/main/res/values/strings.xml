@@ -33,6 +33,7 @@
     <string name="report_adding">Report Adding</string>
     <string name="found">Found</string>
     <string name="view">View</string>
+    <string name="address">address</string>
 
     <string-array name="report_types">
         <item>Lost</item>
@@ -40,9 +41,9 @@
     </string-array>
 
     <string-array name="radius_options">
-        <item>100M</item>
-        <item>200M</item>
-        <item>500M</item>
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
     </string-array>
 
 </resources>

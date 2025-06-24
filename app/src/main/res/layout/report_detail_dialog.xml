@@ -1,0 +1,146 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/add_report_background"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:background="@drawable/item_image_background" />
+
+        <TextView
+            android:id="@+id/detail_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/report_type_label_background"
+            android:textSize="15sp"
+            android:fontFamily="@font/agency_fb"
+            />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/detail_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Item Name"
+        android:fontFamily="@font/agency_fb"
+        android:textSize="40sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="8dp"
+
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start">
+
+        <TextView
+            android:id="@+id/detail_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/map_pin"
+            android:text="Location"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detail_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/calendar"
+            android:text="Date"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detail_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/user"
+            android:text="Posted by"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp" />
+
+
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:fontFamily="@font/agency_fb"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+    <TextView
+        android:id="@+id/detail_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I found a black leather wallet on May 30th, around 6:30 PM near Colombo Fort Railway Station entrance, close to the ticket counter.
+It’s a bifold wallet, slightly worn, with a scratch on the front side."
+        android:fontFamily="@font/agency_fb_reg"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:fontFamily="@font/agency_fb"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        />
+    <FrameLayout
+        android:id="@+id/map_frame"
+        android:layout_width="match_parent"
+        android:layout_height="185dp"
+        android:clipToOutline="true"
+        android:background="@drawable/image_round"
+      >
+
+        <fragment
+            android:id="@+id/map_container"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+
+
+</LinearLayout>

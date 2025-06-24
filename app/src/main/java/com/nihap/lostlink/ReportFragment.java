@@ -48,6 +48,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -57,7 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReportFragment extends Fragment implements OnMapReadyCallback {
+public class ReportFragment extends Fragment {
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private AppCompatImageButton addButton;
     private ImageView imagePreview;
@@ -72,9 +73,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
     private BottomSheetDialog bottomSheetDialog;
 
 
-    private GoogleMap mMap;
-    private EditText locationEditText;
-    private LatLng selectedLatLng;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,8 +85,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
             loadReports();
         });
 
-        locationEditText = view.findViewById(R.id.locationEditText);
-
+       
 
 
         addButton = view.findViewById(R.id.addButton);
@@ -132,17 +130,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                     }
                     adapter.notifyDataSetChanged();
                 });
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.mapFragment);
 
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
 
         return view;
     }
@@ -179,10 +167,32 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
         Spinner reportTypeSpinner = sheetView.findViewById(R.id.reportTypeSpinner);
         EditText itemNameEditText = sheetView.findViewById(R.id.itemNameEditText);
         EditText locationEditText = sheetView.findViewById(R.id.locationEditText);
-        Spinner radiusSpinner = sheetView.findViewById(R.id.radiusSpinner);
+        EditText radiusInput = sheetView.findViewById(R.id.radiusInput);
+        EditText latLongInput = sheetView.findViewById(R.id.latLongInput);
+
+
         EditText descriptionEditText = sheetView.findViewById(R.id.descriptionEditText);
         Button submitBtn = sheetView.findViewById(R.id.submitReportButton);
         loadingScreen = sheetView.findViewById(R.id.loading_screen);
+
+        locationEditText.setFocusable(false); // prevent keyboard
+        locationEditText.setOnClickListener(v -> {
+            MapPickerDialogFragment mapDialog = new MapPickerDialogFragment();
+            mapDialog.show(getParentFragmentManager(), "map_picker");
+        });
+
+
+        getParentFragmentManager().setFragmentResultListener("location_result", this, (requestKey, bundle) -> {
+            String address = bundle.getString("address");
+            double lat = bundle.getDouble("lat");
+            double lng = bundle.getDouble("lng");
+            locationEditText.setText(address);
+            int radius = bundle.getInt("radius");
+            radiusInput.setText(String.valueOf(radius));
+
+            latLongInput.setText(lat + "," + lng);
+        });
+
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
@@ -200,7 +210,6 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
         adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
         reportTypeSpinner.setAdapter(adapter);
-        radiusSpinner.setAdapter(adapter2);
 
 
         imagePreview.setOnClickListener(v -> openImagePicker());
@@ -209,8 +218,10 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
             String reportType = reportTypeSpinner.getSelectedItem().toString();
             String itemName = itemNameEditText.getText().toString();
             String location = locationEditText.getText().toString();
-            String radius = radiusSpinner.getSelectedItem().toString();
             String description = descriptionEditText.getText().toString();
+            String latLong= latLongInput.getText().toString();
+            int radius = Integer.parseInt(radiusInput.getText().toString());
+
 
 
             if (itemName.isEmpty() || location.isEmpty()) {
@@ -218,7 +229,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                 return;
             }
 
-            uploadReportToFirebase(reportType, itemName, location, radius, description, selectedImageUri);
+            uploadReportToFirebase(reportType, itemName, location, latLong, radius, description, selectedImageUri);
 
 
 
@@ -234,7 +245,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
         imagePickerLauncher.launch(intent);
     }
 
-    private void uploadReportToFirebase(String reportType, String itemName, String location, String radius, String description, Uri imageUri) {
+    private void uploadReportToFirebase(String reportType, String itemName, String location, String latLang ,int radius, String description, Uri imageUri) {
         if (imageUri == null) {
             Toast.makeText(getContext(), "Please select an image", Toast.LENGTH_SHORT).show();
             return;
@@ -258,7 +269,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String imageUrl = uri.toString();
-                        uploadReportData(reportType, itemName, location, radius, description, imageUrl, userId);
+                        uploadReportData(reportType, itemName, location, latLang ,radius, description, imageUrl, userId);
                     });
                 })
                 .addOnFailureListener(e -> {
@@ -266,34 +277,13 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                 });
 
     }
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-
-        // Let user pick location
-        mMap.setOnMapClickListener(latLng -> {
-            mMap.clear(); // Remove previous marker
-            mMap.addMarker(new MarkerOptions().position(latLng));
-            selectedLatLng = latLng;
-
-            // Set to EditText
-            locationEditText.setText(latLng.latitude + ", " + latLng.longitude);
-        });
-    }
-
 
     @Override
     public void onResume() {
         super.onResume();
         loadReports();
     }
-    private void uploadReportData(String reportType, String itemName, String location, String radius, String description, String imageUrl, String userId) {
+    private void uploadReportData(String reportType, String itemName, String location, String latLang,int radius, String description, String imageUrl, String userId) {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     String userName = documentSnapshot.getString("name");
@@ -301,6 +291,20 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                     reportData.put("reportType", reportType);
                     reportData.put("itemName", itemName);
                     reportData.put("location", location);
+
+                    GeoPoint geoPoint;
+                    try {
+                        String[] latLngParts = latLang.split(",");
+                        double latitude = Double.parseDouble(latLngParts[0].trim());
+                        double longitude = Double.parseDouble(latLngParts[1].trim());
+                        geoPoint = new GeoPoint(latitude, longitude);
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), "Invalid location format", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    reportData.put("geoPoint", geoPoint);
+
                     reportData.put("radius", radius);
                     reportData.put("description", description);
                     reportData.put("imageUrl", imageUrl);
@@ -313,7 +317,6 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                                 loadingScreen.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Report submitted", Toast.LENGTH_SHORT).show();
                                 bottomSheetDialog.dismiss();
-
                             })
                             .addOnFailureListener(e -> {
                                 loadingScreen.setVisibility(View.GONE);
@@ -323,8 +326,6 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to get user name", Toast.LENGTH_SHORT).show();
                 });
-
-
     }
 
 }

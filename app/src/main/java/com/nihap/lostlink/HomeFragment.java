@@ -32,6 +32,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+
         // Set up map fragment dynamically
         SupportMapFragment mapFragment = new SupportMapFragment();
         FragmentManager fm = getChildFragmentManager();

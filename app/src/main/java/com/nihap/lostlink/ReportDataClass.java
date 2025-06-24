@@ -1,12 +1,15 @@
 package com.nihap.lostlink;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 public class ReportDataClass {
     private String reportType;
     private String itemName;
     private String location;
-    private String radius;
+    private Integer radius;
+
+    private GeoPoint geoPoint;
     private String description;
     private String imageUrl;
     private String userId;
@@ -18,7 +21,9 @@ public class ReportDataClass {
     public String getReportType() { return reportType; }
     public String getItemName() { return itemName; }
     public String getLocation() { return location; }
-    public String getRadius() { return radius; }
+    public Integer getRadius() { return radius; }
+
+    public GeoPoint getGeoPoint(){return geoPoint;}
     public String getDescription() { return description; }
 
     public Timestamp getTimeStamp() { return timestamp; }
