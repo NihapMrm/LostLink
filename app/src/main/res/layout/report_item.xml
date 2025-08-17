@@ -6,7 +6,7 @@
     android:padding="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/item_background"
+    android:background="@drawable/bg_item"
 
     android:layout_marginTop="15dp"
     >
@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:clipToOutline="true"
-            android:background="@drawable/item_image_background" />
+            android:background="@drawable/bg_item_image" />
 
         <TextView
             android:id="@+id/report_type"
@@ -32,7 +32,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:textColor="@android:color/black"
-            android:background="@drawable/report_type_label_background"
+            android:background="@drawable/bg_report_type_label"
             android:textSize="15sp"
             android:fontFamily="@font/agency_fb"
             />
@@ -57,7 +57,7 @@
         android:fontFamily="@font/agency_fb_reg"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:drawableStart="@drawable/map_pin"
+        android:drawableStart="@drawable/ic_map_pin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -65,7 +65,7 @@
         android:fontFamily="@font/agency_fb_reg"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:drawableStart="@drawable/calendar"
+        android:drawableStart="@drawable/ic_calendar_alt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -73,7 +73,7 @@
         android:fontFamily="@font/agency_fb_reg"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:drawableStart="@drawable/user"
+        android:drawableStart="@drawable/ic_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -88,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/submit_box"
+            android:background="@drawable/bg_submit_box"
             android:text="@string/found"
             android:textColor="@color/white"
             android:layout_marginEnd="8dp"

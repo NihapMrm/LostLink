@@ -50,17 +50,17 @@ public class OnboardFragment extends Fragment {
             case 0:
                 title.setText("Welcome to LostLink!");
                 description.setText("Find your lost items easily.");
-                image.setImageResource(R.drawable.onboard1);  // add your image
+                image.setImageResource(R.drawable.img_onboard1);  // add your image
                 break;
             case 1:
                 title.setText("Stay Connected");
                 description.setText("Chat with community about found items.");
-                image.setImageResource(R.drawable.onboard2);
+                image.setImageResource(R.drawable.img_onboard2);
                 break;
             case 2:
                 title.setText("Get Notified");
                 description.setText("Receive alerts instantly.");
-                image.setImageResource(R.drawable.onboard3);
+                image.setImageResource(R.drawable.img_onboard3);
                 break;
         }
 

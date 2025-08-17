@@ -24,7 +24,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
 
     public HomeFragment() {
-        // Required empty public constructor
     }
 
     @Override

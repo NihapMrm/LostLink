@@ -34,6 +34,13 @@
     <string name="found">Found</string>
     <string name="view">View</string>
     <string name="address">address</string>
+    <string name="go">&gt;</string>
+    <string name="my_reports">My Reports</string>
+    <string name="support">Support</string>
+    <string name="logout">Logout</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="phone">Phone</string>
+    <string name="save">Save</string>
 
     <string-array name="report_types">
         <item>Lost</item>
