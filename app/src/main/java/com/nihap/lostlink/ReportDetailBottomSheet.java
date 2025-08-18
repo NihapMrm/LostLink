@@ -53,8 +53,8 @@ public class ReportDetailBottomSheet extends BottomSheetDialogFragment implement
         detailUser.setText(report.getUserName());
         detailDesc.setText(report.getDescription());
 
-        if (report.getTimeStamp() != null) {
-            Date date = report.getTimeStamp().toDate();
+        if (report.getTimestamp() != null) {
+            Date date = report.getTimestamp().toDate();
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
             detailDate.setText(df.format(date));
         }

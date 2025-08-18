@@ -85,7 +85,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_reports"
+                    android:src="@drawable/ic_edit_24"
                     android:contentDescription="@string/my_reports" />
 
                 <TextView
@@ -120,7 +120,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_reports"
+                    android:src="@drawable/ic_reports_new"
                     android:contentDescription="@string/my_reports" />
 
                 <TextView
@@ -155,7 +155,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_reports"
+                    android:src="@drawable/ic_headphones"
                     android:contentDescription="@string/support" />
 
                 <TextView
@@ -248,6 +248,7 @@
                     />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/logoutLayout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:orientation="horizontal"
@@ -260,7 +261,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_reports"
+                    android:src="@drawable/ic_logout"
                     android:contentDescription="My Reports" />
 
                 <TextView

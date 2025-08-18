@@ -41,6 +41,7 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="phone">Phone</string>
     <string name="save">Save</string>
+    <string name="my_mail">nihapmrm@gmail.com</string>
 
     <string-array name="report_types">
         <item>Lost</item>

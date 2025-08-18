@@ -71,7 +71,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         holder.itemName.setText(report.getItemName());
         holder.location.setText(report.getLocation());
         holder.reportType.setText(report.getReportType());
-        Timestamp ts = report.getTimeStamp();
+        Timestamp ts = report.getTimestamp(); // Fixed method name from getTimeStamp() to getTimestamp()
         if (ts != null) {
             Date date = ts.toDate();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());

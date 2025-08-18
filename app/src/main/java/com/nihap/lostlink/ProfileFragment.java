@@ -32,8 +32,10 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImage;
     private String currentImageUrl = "";
 
-
     LinearLayout editProfile;
+    LinearLayout logoutLayout;
+    LinearLayout myReportsLayout; // Add reference to My Reports menu item
+    LinearLayout supportLayout; // Add reference to Support menu item
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         loadUserData();
 
-
+        // Edit Profile click listener
         editProfile = view.findViewById(R.id.editProfile);
         editProfile.setOnClickListener(v -> {
             // Open EditProfileFragment
@@ -70,20 +72,45 @@ public class ProfileFragment extends Fragment {
             transaction.commit();
         });
 
+        // Find the menu layout
+        LinearLayout profileMenuLayout = view.findViewById(R.id.profileMenuLayout);
 
-//        logoutBtn = view.findViewById(R.id.logout_btn);
-//
-//        logoutBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FirebaseAuth.getInstance().signOut();
-//
-//                Intent intent = new Intent(getActivity(), Login.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear backstack
-//                startActivity(intent);
-//                getActivity().finish();
-//            }
-//        });
+        // My Reports click listener (second item in the menu - index 1)
+        myReportsLayout = (LinearLayout) profileMenuLayout.getChildAt(1);
+        myReportsLayout.setOnClickListener(v -> {
+            // Open MyReportsFragment
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new MyReportsFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
+        // Support click listener (third item in the menu - index 2)
+        supportLayout = (LinearLayout) profileMenuLayout.getChildAt(2);
+        supportLayout.setOnClickListener(v -> {
+            // Open SupportFragment
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new SupportFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
+        // Logout click listener (last item in the menu)
+        logoutLayout = view.findViewById(R.id.logoutLayout);
+        logoutLayout.setOnClickListener(v -> {
+            // Sign out from Firebase
+            FirebaseAuth.getInstance().signOut();
+
+            // Navigate to Login activity
+            Intent intent = new Intent(getActivity(), Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+            // Finish current activity
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
     }
 
     private void loadUserData(){

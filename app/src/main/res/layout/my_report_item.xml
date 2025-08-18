@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_item"
+    android:layout_marginTop="15dp">
+
+    <FrameLayout
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="12dp">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:background="@drawable/bg_item_image" />
+
+        <TextView
+            android:id="@+id/report_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/bg_report_type_label"
+            android:textSize="15sp"
+            android:fontFamily="@font/agency_fb" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/itemName"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:fontFamily="@font/agency_fb"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/location"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:drawableStart="@drawable/ic_map_pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/date"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:drawableStart="@drawable/ic_calendar_alt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/postby"
+            android:fontFamily="@font/agency_fb_reg"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:drawableStart="@drawable/ic_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Button Layout for My Reports -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/btn_view"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_submit_box"
+                android:text="View"
+                android:textColor="@color/white"
+                android:layout_marginEnd="4dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/agency_fb" />
+
+            <Button
+                android:id="@+id/btn_edit"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_submit_box"
+                android:text="Edit"
+                android:textColor="@color/white"
+                android:layout_marginEnd="4dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/agency_fb" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableStart="@drawable/ic_delete_24"
+                android:paddingStart="15dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/agency_fb" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
