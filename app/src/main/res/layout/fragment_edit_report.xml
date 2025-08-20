@@ -157,16 +157,38 @@
                 android:scaleType="centerCrop"
                 android:layout_marginBottom="16dp" />
 
-            <Button
-                android:id="@+id/btnSelectImage"
+            <!-- Image Selection Buttons -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_submit_box"
-                android:text="Select New Image"
-                android:textColor="@color/white"
-                android:fontFamily="@font/agency_fb"
-                android:textSize="16sp"
-                android:layout_marginBottom="24dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/btnSelectCamera"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_submit_box"
+                    android:text="Camera"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/agency_fb"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnSelectGallery"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_submit_box"
+                    android:text="Gallery"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/agency_fb"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
             <!-- Save Button -->
             <Button

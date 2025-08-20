@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Thumb when switch is ON -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="50dp" />
+            <solid android:color="@color/black" />
+            <size android:width="40dp" android:height="10dp" />
+        </shape>
+    </item>
+
+    <!-- Thumb when switch is OFF -->
+    <item android:state_checked="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="50dp" />
+            <solid android:color="@color/semi_grey" />
+            <size android:width="40dp" android:height="10dp" />
+        </shape>
+    </item>
+</selector>
+

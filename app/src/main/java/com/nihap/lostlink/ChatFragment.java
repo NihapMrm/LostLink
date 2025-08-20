@@ -1,64 +1,117 @@
 package com.nihap.lostlink;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
+import android.util.Log;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ChatFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerViewChatRooms;
+    private SwipeRefreshLayout swipeRefreshChat;
+    private LinearLayout layoutEmptyChats;
+    private ChatRoomAdapter chatRoomAdapter;
+    private List<ChatRoom> chatRooms;
+    private ChatManager chatManager;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChatFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChatFragment newInstance(String param1, String param2) {
-        ChatFragment fragment = new ChatFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static ChatFragment newInstance() {
+        return new ChatFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        chatRooms = new ArrayList<>();
+        chatManager = new ChatManager();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+
+        initializeViews(view);
+        setupRecyclerView();
+        setupSwipeRefresh();
+        loadChatRooms();
+
+        return view;
+    }
+
+    private void initializeViews(View view) {
+        recyclerViewChatRooms = view.findViewById(R.id.recyclerViewChatRooms);
+        swipeRefreshChat = view.findViewById(R.id.swipeRefreshChat);
+        layoutEmptyChats = view.findViewById(R.id.layoutEmptyChats);
+    }
+
+    private void setupRecyclerView() {
+        chatRoomAdapter = new ChatRoomAdapter(getContext(), chatRooms);
+        recyclerViewChatRooms.setAdapter(chatRoomAdapter);
+        recyclerViewChatRooms.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    private void setupSwipeRefresh() {
+        swipeRefreshChat.setOnRefreshListener(this::loadChatRooms);
+    }
+
+    private void loadChatRooms() {
+        swipeRefreshChat.setRefreshing(true);
+
+        Log.d("ChatFragment", "Loading chat rooms...");
+
+        chatManager.getUserChatRooms(new ChatManager.ChatRoomsCallback() {
+            @Override
+            public void onSuccess(List<ChatRoom> newChatRooms) {
+                if (getContext() == null) return;
+
+                Log.d("ChatFragment", "Loaded " + newChatRooms.size() + " chat rooms");
+
+                chatRooms.clear();
+                chatRooms.addAll(newChatRooms);
+                chatRoomAdapter.updateChatRooms(chatRooms);
+
+                updateEmptyState();
+                swipeRefreshChat.setRefreshing(false);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                if (getContext() == null) return;
+
+                Log.e("ChatFragment", "Error loading chats: " + e.getMessage(), e);
+                Toast.makeText(getContext(), "Error loading chats: " + e.getMessage(),
+                             Toast.LENGTH_SHORT).show();
+                swipeRefreshChat.setRefreshing(false);
+                updateEmptyState();
+            }
+        });
+    }
+
+    private void updateEmptyState() {
+        if (chatRooms.isEmpty()) {
+            recyclerViewChatRooms.setVisibility(View.GONE);
+            layoutEmptyChats.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewChatRooms.setVisibility(View.VISIBLE);
+            layoutEmptyChats.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadChatRooms();
     }
 }

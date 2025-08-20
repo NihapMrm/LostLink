@@ -1,12 +1,14 @@
 package com.nihap.lostlink;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.text.DateFormat;
@@ -26,9 +30,12 @@ public class ReportDetailBottomSheet extends BottomSheetDialogFragment implement
 
     private ReportDataClass report;
     private GoogleMap googleMap;
+    private ChatManager chatManager;
+    private String reportId;
 
-    public ReportDetailBottomSheet(ReportDataClass report) {
+    public ReportDetailBottomSheet(ReportDataClass report, String reportId) {
         this.report = report;
+        this.reportId = reportId;
     }
 
     @Nullable
@@ -39,6 +46,8 @@ public class ReportDetailBottomSheet extends BottomSheetDialogFragment implement
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        chatManager = new ChatManager();
+
         ImageView detailImage = view.findViewById(R.id.detail_image);
         TextView detailName = view.findViewById(R.id.detail_item_name);
         TextView detailLocation = view.findViewById(R.id.detail_location);
@@ -46,6 +55,7 @@ public class ReportDetailBottomSheet extends BottomSheetDialogFragment implement
         TextView detailUser = view.findViewById(R.id.detail_user);
         TextView detailDate = view.findViewById(R.id.detail_date);
         TextView detailDesc = view.findViewById(R.id.detail_description);
+        TextView buttonContactOwner = view.findViewById(R.id.buttonContactOwner);
 
         detailName.setText(report.getItemName());
         detailLocation.setText(report.getLocation());
@@ -61,11 +71,69 @@ public class ReportDetailBottomSheet extends BottomSheetDialogFragment implement
 
         Glide.with(requireContext()).load(report.getImageUrl()).into(detailImage);
 
+        // Check if current user is the owner of the report
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getUid().equals(report.getUserId())) {
+            // Hide contact button for own reports
+            buttonContactOwner.setVisibility(View.GONE);
+        } else {
+            // Setup contact button click listener
+            buttonContactOwner.setOnClickListener(v -> contactOwner());
+        }
+
         // Setup Map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_container);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+    }
+
+    private void contactOwner() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "Please login to contact the owner", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create or get chat room
+        chatManager.createOrGetChatRoom(
+            reportId,
+            report.getItemName(),
+            report.getReportType(),
+            report.getImageUrl(),
+            report.getUserId(),
+            report.getUserName(),
+            new ChatManager.ChatRoomCallback() {
+                @Override
+                public void onSuccess(String chatRoomId) {
+                    if (getContext() == null) return;
+
+                    // Create ChatRoom object for the activity
+                    ChatRoom chatRoom = new ChatRoom();
+                    chatRoom.setChatRoomId(chatRoomId);
+                    chatRoom.setReportId(reportId);
+                    chatRoom.setReportTitle(report.getItemName());
+                    chatRoom.setReportType(report.getReportType());
+                    chatRoom.setReportImageUrl(report.getImageUrl());
+                    chatRoom.setOtherUserName(report.getUserName());
+                    chatRoom.setOtherUserId(report.getUserId());
+
+                    // Start chat activity
+                    Intent intent = new Intent(getContext(), ChatRoomActivity.class);
+                    intent.putExtra("chatRoom", chatRoom);
+                    startActivity(intent);
+
+                    dismiss();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    if (getContext() == null) return;
+                    Toast.makeText(getContext(), "Failed to start chat: " + e.getMessage(),
+                                 Toast.LENGTH_SHORT).show();
+                }
+            }
+        );
     }
 
     @Override

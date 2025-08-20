@@ -2,9 +2,14 @@ package com.nihap.lostlink;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import androidx.core.content.FileProvider;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,23 +34,31 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 public class EditReportFragment extends Fragment {
 
     private static final String ARG_REPORT = "report";
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     private ReportDataClass originalReport;
     private EditText editItemName, editLocation, editDescription;
     private Spinner spinnerReportType;
     private ImageView imagePreview;
-    private Button btnSave, btnSelectImage;
+    private Button btnSave, btnSelectCamera, btnSelectGallery;
     private ImageButton backButton;
     private TextView titleText;
 
     private Uri selectedImageUri;
+    private Uri photoUri;
+    private String currentPhotoPath;
     private String currentImageUrl;
 
     private FirebaseAuth auth;
@@ -64,6 +77,14 @@ public class EditReportFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     selectedImageUri = result.getData().getData();
+                    imagePreview.setImageURI(selectedImageUri);
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> cameraLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    selectedImageUri = photoUri;
                     imagePreview.setImageURI(selectedImageUri);
                 }
             });
@@ -98,7 +119,8 @@ public class EditReportFragment extends Fragment {
         editDescription = view.findViewById(R.id.editDescription);
         spinnerReportType = view.findViewById(R.id.spinnerReportType);
         imagePreview = view.findViewById(R.id.imagePreview);
-        btnSelectImage = view.findViewById(R.id.btnSelectImage);
+        btnSelectCamera = view.findViewById(R.id.btnSelectCamera);
+        btnSelectGallery = view.findViewById(R.id.btnSelectGallery);
         btnSave = view.findViewById(R.id.btnSave);
 
         titleText.setText("Edit Report");
@@ -138,12 +160,67 @@ public class EditReportFragment extends Fragment {
             }
         });
 
-        btnSelectImage.setOnClickListener(v -> {
+        btnSelectGallery.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             imagePickerLauncher.launch(intent);
         });
 
+        btnSelectCamera.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                requestCameraPermission();
+            }
+        });
+
         btnSave.setOnClickListener(v -> saveReport());
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+            try {
+                File photoFile = createImageFile();
+                photoUri = FileProvider.getUriForFile(requireContext(),
+                        "com.nihap.lostlink.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                cameraLauncher.launch(takePictureIntent);
+            } catch (IOException ex) {
+                Toast.makeText(getContext(), "Error occurred while creating the file", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void requestCameraPermission() {
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required to take pictures", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void saveReport() {

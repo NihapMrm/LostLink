@@ -141,6 +141,31 @@ It’s a bifold wallet, slightly worn, with a scratch on the front side."
             android:layout_height="match_parent" />
     </FrameLayout>
 
+    <!-- Contact Owner Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
 
+        <TextView
+            android:id="@+id/buttonContactOwner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Contact Owner"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/agency_fb"
+            android:background="@drawable/bg_submit_box"
+            android:padding="16dp"
+            android:gravity="center"
+            android:drawableStart="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:layout_marginEnd="8dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

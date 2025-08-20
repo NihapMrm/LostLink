@@ -60,6 +60,38 @@
                     app:tint="@color/black" />
             </FrameLayout>
 
+            <!-- Image Selection Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/btnSelectCamera"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_submit_box"
+                    android:text="Camera"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/agency_fb"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnSelectGallery"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_submit_box"
+                    android:text="Gallery"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/agency_fb"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
             <Spinner
                 android:id="@+id/reportTypeSpinner"
@@ -122,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Radius"
                 android:visibility="gone"
-               />
+                />
 
             <EditText
 
@@ -131,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Latlong"
                 android:visibility="gone"
-                 />
+                />
 
             <EditText
                 android:id="@+id/descriptionEditText"
@@ -170,7 +202,7 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-       >
+        >
 
         <ProgressBar
             android:id="@+id/progressBar"

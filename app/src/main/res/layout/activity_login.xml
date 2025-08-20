@@ -73,18 +73,29 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp" />
 
-        <EditText
-            android:id="@+id/password"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_box_border"
-            android:fontFamily="@font/agency_fb_reg"
-            android:hint="@string/password"
-            android:paddingLeft="20dp"
-            android:inputType="textPassword"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:textSize="24sp" />
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleDrawable="@drawable/ic_eye_open"
+            app:passwordToggleTint="@color/black"
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_box_border"
+                android:fontFamily="@font/agency_fb_reg"
+                android:hint="@string/password"
+                android:paddingLeft="20dp"
+                android:paddingRight="48dp"
+                android:inputType="textPassword"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="24sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Space
             android:layout_width="wrap_content"

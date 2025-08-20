@@ -1,9 +1,14 @@
 package com.nihap.lostlink;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.*;
@@ -11,6 +16,9 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -19,12 +27,19 @@ import com.google.firebase.auth.*;
 import com.google.firebase.firestore.*;
 import com.google.firebase.storage.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class EditProfileFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 2;
+    private static final int CAMERA_PERMISSION_REQUEST = 100;
 
     private EditText editTextFullName, editTextEmail, editTextPhone;
     private Button buttonSave;
@@ -38,7 +53,9 @@ public class EditProfileFragment extends Fragment {
     private DocumentReference userRef;
 
     private Uri imageUri;
+    private Uri cameraImageUri;
     private String currentImageUrl = "";
+    private String currentPhotoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,11 +81,81 @@ public class EditProfileFragment extends Fragment {
             loadUserData();
         }
 
-        profileImageView.setOnClickListener(v -> openImageChooser());
+        profileImageView.setOnClickListener(v -> showImagePickerDialog());
         buttonSave.setOnClickListener(v -> saveUserData());
         buttonBack.setOnClickListener(v -> getActivity().onBackPressed());
 
         return view;
+    }
+
+    private void showImagePickerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select Profile Picture")
+                .setItems(new String[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            checkCameraPermissionAndOpenCamera();
+                            break;
+                        case 1:
+                            openImageChooser();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    private void checkCameraPermissionAndOpenCamera() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST);
+        } else {
+            openCamera();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required to take photos",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(getContext(), "Error creating image file", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (photoFile != null) {
+                cameraImageUri = FileProvider.getUriForFile(getContext(),
+                        "com.nihap.lostlink.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void openImageChooser() {
@@ -81,10 +168,29 @@ public class EditProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            profileImageView.setImageURI(imageUri); // preview
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
+                imageUri = data.getData();
+                loadImageWithCircularTransform(imageUri);
+            } else if (requestCode == CAMERA_REQUEST) {
+                imageUri = cameraImageUri;
+                loadImageWithCircularTransform(imageUri);
+            }
         }
+    }
+
+    private void loadImageWithCircularTransform(Uri uri) {
+        int radiusInPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                500, // Half of the ImageView size (100dp / 2)
+                getResources().getDisplayMetrics()
+        );
+
+        Glide.with(this)
+                .load(uri)
+                .transform(new RoundedCorners(radiusInPx))
+                .placeholder(R.drawable.ic_default_profile)
+                .into(profileImageView);
     }
 
     private void loadUserData() {

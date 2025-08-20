@@ -91,7 +91,9 @@ public class MyReportsAdapter extends RecyclerView.Adapter<MyReportsAdapter.View
 
         // View button click
         holder.viewBtn.setOnClickListener(v -> {
-            ReportDetailBottomSheet bottomSheet = new ReportDetailBottomSheet(report);
+            // Generate a unique report ID for the chat functionality
+            String reportId = "my_report_" + position + "_" + System.currentTimeMillis();
+            ReportDetailBottomSheet bottomSheet = new ReportDetailBottomSheet(report, reportId);
             bottomSheet.show(((FragmentActivity) context).getSupportFragmentManager(), "report_detail");
         });
 
@@ -112,14 +114,32 @@ public class MyReportsAdapter extends RecyclerView.Adapter<MyReportsAdapter.View
     }
 
     private void showDeleteConfirmationDialog(ReportDataClass report, int position) {
-        new AlertDialog.Builder(context)
-                .setTitle("Delete Report")
-                .setMessage("Are you sure you want to delete this report? This action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    deleteReport(report, position);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        // Create custom dialog using the new layout
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_delete_report, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        // Make dialog background transparent to show custom background
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // Find buttons in the custom layout
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnConfirmDelete = dialogView.findViewById(R.id.btn_confirm_delete);
+
+        // Set click listeners
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnConfirmDelete.setOnClickListener(v -> {
+            dialog.dismiss();
+            deleteReport(report, position);
+        });
+
+        dialog.show();
     }
 
     private void deleteReport(ReportDataClass report, int position) {

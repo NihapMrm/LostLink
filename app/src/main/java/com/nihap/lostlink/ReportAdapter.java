@@ -82,9 +82,10 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
 
         holder.postby.setText(report.getUserName());
 
-
         holder.viewBtn.setOnClickListener(v -> {
-            ReportDetailBottomSheet bottomSheet = new ReportDetailBottomSheet(report);
+            // Generate a unique report ID for the chat functionality
+            String reportId = "report_" + position + "_" + System.currentTimeMillis();
+            ReportDetailBottomSheet bottomSheet = new ReportDetailBottomSheet(report, reportId);
             bottomSheet.show(((FragmentActivity) context).getSupportFragmentManager(), "report_detail");
         });
 
